@@ -1,0 +1,251 @@
+# Example script showcasing how to use the non-linear ICA framework.
+!obj:pylearn2.train.Train {
+    dataset: &train !obj:pylearn2.datasets.cifar10.CIFAR10 {
+        rescale: 1,
+        center: 1,
+        which_set: 'train',
+        start: 0,
+        stop: 40000
+    },
+    model: !obj:nice.pylearn2.models.nice.NICE {
+        # Input dimensions (x's dimensionality)
+        nvis: &nvis 3072,
+        # Corrupt the data to avoid failure modes
+        corruptor: !obj:nice.pylearn2.corruption.Dequantizer {
+            low: -1.,
+            high: 1.,
+            n_values: 256,
+            corruption_level: 1,
+        },
+        # The encoder model is a MLP
+        encoder: !obj:nice.pylearn2.models.mlp.TriangularMLP {
+            layer_name: 'encoder',
+            layers: [
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: &half_nvis 1536,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_1',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_1_h1',
+                                dim: &nhid 2400,
+                                irange: &irange .01,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_1_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_2',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_2_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_2_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_3',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_3_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_3_h2',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_3_h3',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_3_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_4',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_4_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_4_h2',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_4_h3',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_4_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_5',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_5_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_5_h2',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_5_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_6',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_6_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_6_h2',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_6_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_7',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_7_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_7_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.CouplingLayer {
+                    split: *half_nvis,
+                    coupling: !obj:pylearn2.models.mlp.MLP {
+                        layer_name: 'coupling_8',
+                        layers: [
+                            !obj:pylearn2.models.mlp.RectifiedLinear {
+                                layer_name: 'coupling_8_h1',
+                                dim: *nhid,
+                                irange: *irange,
+                            },
+                            !obj:pylearn2.models.mlp.Linear {
+                                layer_name: 'coupling_8_out',
+                                dim: *half_nvis,
+                                irange: *irange,
+                            },
+                        ],
+                    },
+                },
+                !obj:nice.pylearn2.models.mlp.Homothety {
+                    layer_name: 'z',
+                },
+            ],
+        },
+        # The prior model is picked as normal
+        prior: !obj:nice.pylearn2.models.nice.StandardNormal {},
+    },
+    algorithm: !obj:pylearn2.training_algorithms.sgd.SGD {
+        batch_size: 200,
+        learning_rate: 2e-4,
+        learning_rule: !obj:nice.pylearn2.training_algorithms.learning_rule.RMSPropMomentum {
+            init_momentum: 0.00,
+        },
+        monitoring_dataset: {
+            'train' : *train,
+            'valid' : !obj:pylearn2.datasets.cifar10.CIFAR10 {
+                rescale: 1,
+                center: 1,
+                which_set: 'train',
+                start: 40000,
+                stop:  50000
+            },
+            'test' : !obj:pylearn2.datasets.cifar10.CIFAR10 {
+                rescale: 1,
+                center: 1,
+                which_set: 'test',
+            },
+        },
+        cost: !obj:nice.pylearn2.costs.log_likelihood.NegativeLogLikelihood {},
+        termination_criterion: !obj:pylearn2.termination_criteria.EpochCounter {
+            max_epochs: 1500,
+        },
+        update_callbacks: [
+            !obj:pylearn2.training_algorithms.sgd.ExponentialDecay {
+                decay_factor: 1.0005,
+                min_lr:       1e-5,
+            },
+        ],
+    },
+    extensions: [
+        !obj:pylearn2.train_extensions.best_params.MonitorBasedSaveBest {
+           channel_name: 'valid_objective',
+           save_path: "${PYLEARN2_TRAIN_FILE_FULL_STEM}_best.pkl",
+        },
+        !obj:pylearn2.training_algorithms.learning_rule.MomentumAdjustor {
+            final_momentum: .5,
+            start: 5,
+            saturate: 6,
+        },
+    ],
+    save_path: "${PYLEARN2_TRAIN_FILE_FULL_STEM}.pkl",
+    save_freq: 10,
+}

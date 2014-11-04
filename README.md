@@ -25,7 +25,7 @@ or Pylearn2 so subsequent changes to those libraries may break the code
 in this repository. If you encounter problems with this code, you should
 make sure that you are using the development branch of [Pylearn2](https://github.com/lisa-lab/pylearn2/) and
 [Theano](https://github.com/Theano/Theano/),
-and use `git checkout` to go to a commit from approximately October 21, 2014. More precisely [`git checkout 3be2a6`](https://github.com/lisa-lab/pylearn2/commit/3be2a6d5ff81273c12023208166b630300eff338) and [`git checkout 165eb4`](https://github.com/Theano/Theano/commit/165eb4e66ab1f5320b2fe67c630a7e76ae5e6526).
+and use `git checkout` to go to a commit from approximately October 21, 2014. More precisely [`git checkout 3be2a6`](https://github.com/lisa-lab/pylearn2/commit/3be2a6d5ff81273c12023208166b630300eff338) (for Pylearn2) and [`git checkout 165eb4`](https://github.com/Theano/Theano/commit/165eb4e66ab1f5320b2fe67c630a7e76ae5e6526) (for Theano).
 
 This code itself requires no installation besides making sure that the
 `nice` directory is in a directory in your PYTHONPATH. If

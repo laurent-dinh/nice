@@ -2,6 +2,7 @@ NICE: Non-linear independent components estimation
 ==================================================
 
 This repository contains code (in [`pylearn2/`](https://github.com/laurent-dinh/nice/blob/master/pylearn2/)) and hyperparameters (in [`exp/`](https://github.com/laurent-dinh/nice/blob/master/exp/)) for the paper:
+
 ["NICE: Non-linear independent components estimation"](http://arxiv.org/abs/1410.8516) Laurent Dinh, David Krueger, Yoshua Bengio. ArXiv 2014.
 
 Please cite this paper if you use the code in this repository as part of
